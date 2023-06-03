@@ -14,7 +14,9 @@ from flask_limiter.util import get_remote_address
 limiter = Limiter(key_func=get_remote_address, app=app)
 import sqlite3
 import time
-
+from flask_caching import Cache
+app = Flask(__name__)
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 if len(sys.argv) < 2:
     print("Error: Please provide the ICAO24 value as a command-line argument.")
     sys.exit(1)
@@ -107,6 +109,7 @@ def job(icao24, username, password, database):
 
 @app.route('/')
 @limiter.limit("20 per minute")
+@cache.cached(timeout=60)  # Cache the result of this route for 60 seconds
 def map_image():
     label = ICAO24
     latest_data = get_latest_data('db.sqlite3')
