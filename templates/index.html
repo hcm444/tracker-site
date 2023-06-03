@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <script>
+    var images = [
+        "{{ image_data0 }}",
+        "{{ image_data1 }}",
+        "{{ image_data2 }}",
+        "{{ image_data3 }}"
+    ];
+    var currentImageIndex = 0;
+
+    function zoomIn() {
+        currentImageIndex = Math.min(currentImageIndex + 1, images.length - 1);
+        updateImage();
+    }
+
+    function zoomOut() {
+        currentImageIndex = Math.max(currentImageIndex - 1, 0);
+        updateImage();
+    }
+
+    function updateImage() {
+        var imageElement = document.getElementById("flightMap");
+        imageElement.src = "data:image/png;base64," + images[currentImageIndex];
+    }
+
+		function refreshPage() {
+			location.reload(); // Reload the entire page
+		}
+
+		// Refresh the page after 2 minutes (120,000 milliseconds)
+		setTimeout(refreshPage, 120000);
+</script>
+    <title>Flight Information</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: black;
+            color: green;
+        }
+
+        .text-center {
+    		text-align: center;
+		}
+
+		.btn-success {
+			background-color: green;
+			color: black;
+		}
+
+        .container {
+            padding: 20px;
+            margin: 0 auto;
+            max-width: 800px;
+        }
+
+        .table {
+            background-color: black;
+            color: green;
+        }
+
+        .table th {
+            background-color: #444;
+            color: green;
+        }
+
+        .table tr:hover {
+            background-color: #111;
+        }
+
+        .table a {
+            color: green;
+            text-decoration: none;
+            border-bottom: 1px dotted green;
+            transition: all 0.3s;
+        }
+
+        .table a:hover {
+            color: green;
+            background-color: #111;
+            text-decoration: none;
+            border-bottom: 1px solid green;
+            padding: 2px;
+            border-radius: 3px;
+        }
+
+        .image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+        }
+
+        .timestamp {
+            text-align: center;
+            font-size: 14px;
+            margin: 20px 0;
+            color: green;
+        }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Flight Information</h1>
+        <table class="table table-hover">
+			<thead>
+				<tr>
+					<th>ICAO24</th>
+					<th>Callsign</th>
+					<th>Origin Country</th>
+					<th>Latitude</th>
+					<th>Longitude</th>
+					<th>Altitude</th>
+					<th>Velocity</th>
+					<th>Heading</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for data in latest_data %}
+				<tr>
+					<td>{{ data[0] }}</td>
+					<td>{{ data[1] }}</td>
+					<td>{{ data[2] }}</td>
+					<td>{{ data[5] }}</td>
+					<td>{{ data[6] }}</td>
+					<td>{{ data[7] }}</td>
+					<td>{{ data[9] }}</td>
+					<td>{{ data[10] }}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+        <div class="text-center">
+            <img id="flightMap" src="data:image/png;base64,{{ image_data0 }}" alt="Flight Path Map">
+        </div>
+
+        <div class="text-center">
+			<button class="btn btn-success btn-lg" onclick="zoomIn()">Zoom In</button>
+    		<button class="btn btn-success btn-lg" onclick="zoomOut()">Zoom Out</button>
+		</div>
+
+        <p class="timestamp">Latest UTC Timestamp: {{ latest_time }}</p>
+
+		<section id="about">
+   		 <h2>About</h2>
+    		<p>
+        	This website provides flight information and displays a flight path map. The flight data includes details such as ICAO24 code, callsign, origin country, latitude, longitude, altitude, velocity, and heading. The flight map is updated every two minutes to show the latest position of the aircraft. This site is simplistic, built with Python, HTML, and the Flask framework. It is hosted on a DigitalOcean droplet.
+    		</p>
+		</section>
+	</div>
+</body>
+</html>
